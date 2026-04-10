@@ -2,7 +2,7 @@
 
 A production-oriented credit scoring pipeline that combines **psychometric (DRA) assessments** with **traditional credit bureau features** to predict loan default probability, calibrate it to a scorecard, and assign A–E risk bands. This data is simulated from original dataset containing about 44 998 unique cases to protect any personal data. 
 
-The project is engineered to be promoted from a local notebook to a CI/CD-driven analytics product with a clean, reproducible path from raw data to scored customer. The ultimate goals is to set up source environment and production pipeline with test to make sure code works properly. 
+The project is engineered to be promoted from a local notebook to a CI/CD-driven analytics product with a clean, reproducible path from raw data to scored customer. The ultimate goals is to set up source environment and production pipeline with test to make sure code works properly. Finally, SHAP analyses is conducted for trace back and compliance. 
 
 ---
 
