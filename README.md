@@ -28,7 +28,11 @@ The feature space spans four DRA dimension scores, 41 psychometric item-level sc
 
 ![Pipeline: Runtime Architecture](docs/images/pipeline_architecture.png)
 
-**The critical design rule:** every step that learns from the data — imputation medians, scaler statistics, model fitting, calibration — happens **after** the train / validation / test split and is fit on the training slice only. This prevents the subtle information leakage that inflates offline metrics and then destroys a model in production.
+**The Critical Design Rule - Preventing Data Leakage** 
+
+A core principle of this pipeline is the strict prevention of data leakage. Every step that learns from the data — such as calculating imputation medians, scaler statistics, model coefficients, or calibration mappings — is performed **only after** the train/validation/test split and is fitted exclusively on the training set.
+
+This discipline ensures that the validation and test data remain completely unseen during any learning process, mirroring exactly how new loan applications would be scored in production. In credit risk modelling, even small leakage — where information that would not be available in real life at the time of prediction influences model training — can dramatically inflate offline performance metrics (e.g., AUC, Gini, KS) while causing the model to underperform or fail in production.
 
 ---
 
