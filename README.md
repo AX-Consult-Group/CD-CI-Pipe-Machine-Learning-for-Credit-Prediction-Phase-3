@@ -1,12 +1,16 @@
 # Machine Learning for Credit Prediction — Phase 3
 
-A production-oriented credit scoring pipeline that combines **psychometric (DRA) assessments** with **traditional credit bureau features** to predict loan default probability, calibrate it to a scorecard, and assign A–E risk bands. This data is simulated from original dataset containing about 44 998 unique cases to protect any personal data. 
+In the first phase of this project, we demonstrated the value of psychometric data as an alternative input for credit scoring, particularly in thin-file and emerging markets where traditional financial histories are limited or absent. Using the same 13 higher-order DRA factors, we evaluated five different modelling approaches to determine which most effectively ranks credit risk. Our findings showed that while traditional logistic regression provides a stable and highly interpretable baseline, ensemble methods such as XGBoost deliver superior predictive performance by capturing complex non-linear relationships in behavioural data.
 
-The project is engineered to be promoted from a local notebook to a CI/CD-driven analytics product with a clean, reproducible path from raw data to scored customer. The ultimate goal is to set up the source environment and production pipeline, with tests, to ensure the code works properly. Finally, SHAP analysis is conducted for traceback and compliance. Various ML techniques, including XGBoost and Random Forests, are used to define and compile features. Final engineered features are included in the logistic regression model, which is calibrated on actual bad rates to estimate the probability of Default. 
+Building on these insights, the second phase extended the work by exploring additional Machine Learning techniques, including a hybrid modelling approach. Here, XGBoost predictions were passed through a logistic calibration layer to produce well-calibrated probabilities of default (PD). These probabilities were then transformed into an interpretable scorecard format with risk bands (A–F). This phase highlighted how to effectively balance the strong predictive power of advanced ML models with the operational and regulatory advantages of traditional scorecards delivering both accuracy and explainability in a format that lenders can easily adopt. 
+
+In the third phase, we focus on building a complete end-to-end alternative credit scoring pipeline. This production-oriented system integrates **psychometric (DRA) assessments** with **traditional credit bureau features** to predict loan default probability, calibrate these predictions to a scorecard, and assign A–E risk bands. The project is engineered to be promoted from a local notebook to a CI/CD-driven analytics product with a clean, reproducible path from raw data to scored customer. The ultimate goal is to set up the source environment and production pipeline, with tests, to ensure the code works properly. Finally, SHAP analysis is conducted for traceback and compliance. Various ML techniques, including XGBoost and Random Forests, are used to define and compile features. Final engineered features are included in the logistic regression model, which is calibrated on actual bad rates to estimate the Probability of Default. 
 
 ---
 
 ## Dataset
+
+This analysis uses real psychometric assessment data. All financial data is simulated to match realistic distributions and patterns from the original dataset (based on a South African thin-file population) containing about 44 998 unique cases to protect any personal data. 
 
 | Property | Value |
 |---|---|
