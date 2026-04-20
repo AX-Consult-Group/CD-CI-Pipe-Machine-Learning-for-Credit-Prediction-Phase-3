@@ -183,25 +183,42 @@ This repository is structured so the path from a commit to a deployed model is m
 ![CI/CD: Production Roadmap](docs/images/cicd_roadmap.png)
 
 **Stage 1 — Continuous Integration (implemented).** 
-Every push to `main` or `develop`, and every pull request, runs linting, formatting checks, unit tests, and a smoke-run. The smoke test generates a small fixture dataset and executes the full end-to-end pipeline. No merge to `main` is allowed without a green build.
+
+Every push to `main` or `develop`, and every pull request, runs linting (Ruff), formatting checks (Black), unit tests (pytest) across Python 3.10–3.12, and a smoke-run. The smoke test generates a small fixture dataset and executes the full end-to-end pipeline (ingestion → preprocessing → split → training → outputs). No merge to `main` is allowed without a green build.
 
 This foundation ensures code quality, consistency, and basic reproducibility from day one.
 
-**Stage 2 — Continuous Training.** On a cadence (daily or weekly), a scheduled workflow re-runs the full pipeline on the latest production snapshot and writes metrics to a tracking store. This is cron in `ci.yml` plus an `environment` for production secrets.
+**Stage 2 — Continuous Training.** 
 
-**Stage 3 — Model validation gate.** Before a newly trained model can be registered, it must clear hard-coded gates: AUC above a floor, KS above a floor, population stability index (PSI) below a ceiling against the current champion, and no monotonicity violations in the score bands.
+A scheduled workflow (daily or weekly) re-runs the full pipeline on the latest production data snapshot and writes metrics to a tracking store. This requires only minor extensions to the existing `ci.yml` plus secure handling of production data.
 
-**Stage 4 — Model registry.** Passing models are registered with a version, a git SHA, a data hash, and the metrics that earned them promotion. This is the artefact the scoring service consumes — never a `.pkl` pulled from a developer laptop.
+**Stage 3 — Model Validation Gate.** 
 
-**Stage 5 — Scoring service.** A FastAPI container loads the registered model and exposes a `/score` endpoint that takes a customer payload, returns a PD, a score, and a band. The container is built by CI and pushed to a registry on every tag.
+Before registration, every new model must pass hard gates: AUC and KS above defined floors, Population Stability Index (PSI) below a ceiling versus the champion model, and strict monotonicity in the A–E risk bands.
 
-**Stage 6 — Shadow traffic.** New models receive live traffic in parallel with the champion. Predictions are logged for both; no customer decision depends on the challenger yet.
+**Stage 4 — Model Registry.** 
 
-**Stage 7 — Promotion.** After the shadow period, a human review of challenger vs champion metrics promotes or rejects. Promotion flips the live pointer in the registry — no code deploy, no service restart.
+Passing models are versioned with a git SHA, data hash, and full metrics. The scoring service always consumes artefacts from the registry — never a `.pkl` file from a developer's laptop.
 
-**Stage 8 — Monitoring.** Population stability, feature drift, realised bad rate vs predicted PD, and A–E band stability are tracked on a rolling window. Drift beyond a threshold triggers Stage 2 for retraining.
+**Stage 5 — Scoring Service.** 
 
-This is the skeleton customers are buying: not one good model, but a **repeatable system** that can train, validate, deploy, and retire models on a schedule.
+A FastAPI container loads the registered model and exposes a `/score` endpoint. It returns PD, final score, and risk band. The container is built and pushed by CI on every tagged release.
+
+**Stage 6 — Shadow Traffic.** 
+
+New models run in parallel with the champion on live traffic. Predictions are logged for comparison, but customer decisions still use the current champion.
+
+**Stage 7 — Promotion.** 
+
+After the shadow period, a human review compares challenger vs champion metrics. Promotion simply updates a pointer in the model registry — no code changes or service restarts are required.
+
+**Stage 8 — Monitoring.** 
+
+Ongoing tracking of population stability, feature drift, realised bad rate vs predicted PD, and A–E band stability. Significant drift automatically triggers Stage 2 (retraining). 
+
+This is the skeleton that customers and regulators are buying: not just one good model, but a **repeatable, auditable system** that can train, validate, deploy, monitor and and retire models on a schedule — while maintaining the interpretability and compliance needs of credit risk scoring. 
+
+By building strong foundations (leakage-proof pipeline + CI/CD), we make the journey to full production deployment straightforward and low-risk.
 
 ---
 
