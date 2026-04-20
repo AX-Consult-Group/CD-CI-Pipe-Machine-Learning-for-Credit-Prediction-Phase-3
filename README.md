@@ -4,7 +4,7 @@ In the first phase of this project, we demonstrated the value of psychometric da
 
 Building on these insights, the second phase extended the work by exploring additional Machine Learning techniques, including a hybrid modelling approach. Here, XGBoost predictions were passed through a logistic calibration layer to produce well-calibrated probabilities of default (PD). These probabilities were then transformed into an interpretable scorecard format with risk bands (A–F). This phase highlighted how to effectively balance the strong predictive power of advanced ML models with the operational and regulatory advantages of traditional scorecards delivering both accuracy and explainability in a format that lenders can easily adopt. 
 
-In the third phase, we focus on building a complete end-to-end alternative credit scoring pipeline. This production-oriented system integrates **psychometric (DRA) assessments** with **traditional credit bureau features** to predict loan default probability, calibrate these predictions to a scorecard, and assign A–E risk bands. The project is engineered to be promoted from a local notebook to a CI/CD-driven analytics product with a clean, reproducible path from raw data to scored customer. The ultimate goal is to set up the source environment and production pipeline, with tests, to ensure the code works properly. Finally, SHAP analysis is conducted for traceback and compliance. Various ML techniques, including XGBoost and Random Forests, are used to define and compile features. Final engineered features are included in the logistic regression model, which is calibrated on actual bad rates to estimate the Probability of Default. 
+In the third phase, we focus on building a complete end-to-end alternative credit scoring pipeline. This production-oriented system integrates **psychometric (DRA) assessments** with **traditional credit bureau features** to predict loan default probability, calibrate these predictions to a scorecard, and assign A–E risk bands. The project is engineered for a smooth transition from local development to a CI/CD-driven analytics product. It provides a clean, reproducible, and leakage-proof path from raw psychometric and credit-bureau data all the way to scored customers. The ultimate goal is a fully tested, reproducible source environment that can be promoted to production with confidence. Various ML techniques, including XGBoost and Random Forests, are used to define and compile features. These final engineered features are included in the logistic regression model, which is calibrated on actual bad rates to estimate the Probability of Default. Finally, SHAP analysis is conducted for traceback and compliance.
 
 ---
 
@@ -108,6 +108,28 @@ Single-feature AUCs printed by the leakage diagnostic should all fall in roughly
 ## Project Structure
 
 The pipeline follows a structured, leakage-proof workflow specifically designed for credit risk applications where interpretability and regulatory acceptance are as important as predictive power.
+
+***1. Data Ingestion and Preprocessing** 
+
+Raw psychometric (DRA) and credit bureau data are loaded from `DRA_with_simulated_credit.xlsx`. Performance-window variables are explicitly removed to eliminate target leakage. 
+
+***2. Feature Engineering**
+
+Features are mined and engineered manually using domain knowledge of psychometric assessments and traditional credit variables. Unlike fully automated feature-generation approaches, the engineering in this pipeline is intentionally human-guided and transparent. This choice reflects the regulatory reality of credit scoring, where features must be auditable and defensible.
+
+As noted by Keating (2021) in her work on automated feature engineering in ensemble credit scoring pipelines, many modern systems suffer from disconnected feature-engineering and modelling stages. This project takes the complementary path: features are carefully mined once, then deliberately “frozen” into a simple, interpretable model rather than continuously regenerated.
+
+***3. Modelling Approach**
+
+- A **calibrated logistic regression** is trained as the primary scorecard model. Logistic regression is chosen because it produces transparent, monotonic coefficients that can be directly converted into points-based scorecards and A–E risk bands.
+- A **Random Forest** serves as the performance benchmark, confirming that the simpler scorecard does not sacrifice too much predictive power.
+- After training, the same features are “frozen” into the final logistic model. No further automated feature synthesis occurs post-split.
+
+This hybrid design deliberately trades some potential performance gain (that automated feature engineering + ensembles might deliver) for operational usability and regulatory alignment.
+
+***4. Calibration, Risk Banding, and Explainability**
+
+Predicted probabilities are calibrated to true default rates. The calibrated scores are mapped to five monotonic risk bands (A–E). Finally, SHAP values are computed on the test set to provide both global feature importance and individual-level explanations. This closes the loop: features are mined, frozen into an interpretable LR scorecard, and then explained back to stakeholders and regulators.
 
 ```
 Machine-Learning-For-Credit-Prediction-Phase-3/
