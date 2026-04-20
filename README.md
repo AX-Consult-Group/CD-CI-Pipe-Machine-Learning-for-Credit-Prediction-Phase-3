@@ -109,17 +109,17 @@ Single-feature AUCs printed by the leakage diagnostic should all fall in roughly
 
 The pipeline follows a structured, leakage-proof workflow specifically designed for credit risk applications where interpretability and regulatory acceptance are as important as predictive power.
 
-***1. Data Ingestion and Preprocessing** 
+**1. Data Ingestion and Preprocessing** 
 
 Raw psychometric (DRA) and credit bureau data are loaded from `DRA_with_simulated_credit.xlsx`. Performance-window variables are explicitly removed to eliminate target leakage. 
 
-***2. Feature Engineering**
+**2. Feature Engineering**
 
 Features are mined and engineered manually using domain knowledge of psychometric assessments and traditional credit variables. Unlike fully automated feature-generation approaches, the engineering in this pipeline is intentionally human-guided and transparent. This choice reflects the regulatory reality of credit scoring, where features must be auditable and defensible.
 
 As noted by Keating (2021) in her work on automated feature engineering in ensemble credit scoring pipelines, many modern systems suffer from disconnected feature-engineering and modelling stages. This project takes the complementary path: features are carefully mined once, then deliberately “frozen” into a simple, interpretable model rather than continuously regenerated.
 
-***3. Modelling Approach**
+**3. Modelling Approach**
 
 - A **calibrated logistic regression** is trained as the primary scorecard model. Logistic regression is chosen because it produces transparent, monotonic coefficients that can be directly converted into points-based scorecards and A–E risk bands.
 - A **Random Forest** serves as the performance benchmark, confirming that the simpler scorecard does not sacrifice too much predictive power.
@@ -127,7 +127,7 @@ As noted by Keating (2021) in her work on automated feature engineering in ensem
 
 This hybrid design deliberately trades some potential performance gain (that automated feature engineering + ensembles might deliver) for operational usability and regulatory alignment.
 
-***4. Calibration, Risk Banding, and Explainability**
+**4. Calibration, Risk Banding, and Explainability**
 
 Predicted probabilities are calibrated to true default rates. The calibrated scores are mapped to five monotonic risk bands (A–E). Finally, SHAP values are computed on the test set to provide both global feature importance and individual-level explanations. This closes the loop: features are mined, frozen into an interpretable LR scorecard, and then explained back to stakeholders and regulators.
 
