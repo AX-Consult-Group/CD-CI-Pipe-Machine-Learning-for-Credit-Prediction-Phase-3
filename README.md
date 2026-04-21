@@ -1,5 +1,8 @@
 # Machine Learning for Credit Prediction — Phase 3
 
+![Infographic: Design Overview](Infographic.png)
+---
+
 In the first phase of this project, we demonstrated the value of psychometric data as an alternative input for credit scoring, particularly in thin-file and emerging markets where traditional financial histories are limited or absent. Using the same 13 higher-order DRA factors, we evaluated five different modelling approaches to determine which most effectively ranks credit risk. Our findings showed that while traditional logistic regression provides a stable and highly interpretable baseline, ensemble methods such as XGBoost deliver superior predictive performance by capturing complex non-linear relationships in behavioural data.
 
 Building on these insights, the second phase extended the work by exploring additional Machine Learning techniques, including a hybrid modelling approach. Here, XGBoost predictions were passed through a logistic calibration layer to produce well-calibrated probabilities of default (PD). These probabilities were then transformed into an interpretable scorecard format with risk bands (A–F). This phase highlighted how to effectively balance the strong predictive power of advanced ML models with the operational and regulatory advantages of traditional scorecards delivering both accuracy and explainability in a format that lenders can easily adopt. 
